@@ -14,11 +14,17 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
         }
 
         #video-container {
             width: 640px;
             height: 360px;
+            margin-bottom: 20px;
+        }
+
+        #sound-image {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -39,6 +45,19 @@
 <div id="adsense-bottom">
     <!-- Coloca aquí tu código de AdSense -->
 </div>
+
+<!-- Imagen para reproducir sonido -->
+<img id="sound-image" src="benson.png" alt="Reproducir CTM">
+
+<!-- Script para reproducir sonido al hacer clic en la imagen -->
+<script>
+    var audio = new Audio('como-tan-muchacho.mp3');
+    var soundImage = document.getElementById('sound-image');
+    
+    soundImage.addEventListener('click', function() {
+        audio.play();
+    });
+</script>
 
 </body>
 </html>
