@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JP6EY71M2B"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JP6EY71M2B"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'G-JP6EY71M2B');
-</script>
+        gtag('config', 'G-JP6EY71M2B');
+    </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5209187567555173"
      crossorigin="anonymous"></script>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -24,12 +24,22 @@
             height: 100vh;
             margin: 0;
             flex-direction: column;
+            transition: background-color 0.5s ease; /* Agregar transición para suavizar el cambio de color */
         }
 
         #video-container {
+            position: relative;
             width: 640px;
             height: 360px;
             margin-bottom: 20px;
+        }
+
+        #videoFrame {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         #sound-image {
@@ -49,7 +59,7 @@
 <!-- Contenedor del video -->
 <div id="video-container">
     <!-- El reproductor de YouTube se cargará aquí -->
-    <iframe width="640" height="360" src="https://www.youtube.com/embed/videoseries?list=PL67D-jxgrXXCO0NTNr_4oA4XXBWADoSmg&autoplay=1" allow="autoplay" frameborder="0" allowfullscreen></iframe>
+    <iframe id="videoFrame" src="https://www.youtube.com/embed/videoseries?list=PL67D-jxgrXXCO0NTNr_4oA4XXBWADoSmg&autoplay=1" allow="autoplay" frameborder="0" allowfullscreen></iframe>
 </div>
 
 <!-- Espacio abajo para publicidad -->
@@ -62,11 +72,44 @@
 
 <!-- Script para reproducir sonido al hacer clic en la imagen -->
 <script>
-    var audio = new Audio('como-tan-muchacho.mp3');
-    var soundImage = document.getElementById('sound-image');
-    
-    soundImage.addEventListener('click', function() {
-        audio.play();
+    document.addEventListener('DOMContentLoaded', function() {
+        var video = document.getElementById('videoFrame');
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var audio = new Audio('como-tan-muchacho.mp3');
+        var soundImage = document.getElementById('sound-image');
+
+        video.addEventListener('load', function() {
+            // Se ejecuta cada vez que el video comienza a reproducirse
+            setInterval(function() {
+                // Extraer el color dominante del centro del video
+                ctx.drawImage(video, video.width / 4, video.height / 4, video.width / 2, video.height / 2);
+                var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                var color = getDominantColor(data);
+                document.body.style.backgroundColor = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+            }, 1000); // Actualizar el color cada segundo
+        });
+
+        soundImage.addEventListener('click', function() {
+            audio.play();
+        });
+
+        function getDominantColor(data) {
+            var color = [0, 0, 0];
+            var totalPixels = data.length / 4;
+
+            for (var i = 0; i < data.length; i += 4) {
+                color[0] += data[i];
+                color[1] += data[i + 1];
+                color[2] += data[i + 2];
+            }
+
+            color[0] = Math.round(color[0] / totalPixels);
+            color[1] = Math.round(color[1] / totalPixels);
+            color[2] = Math.round(color[2] / totalPixels);
+
+            return color;
+        }
     });
 </script>
 
