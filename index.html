@@ -24,7 +24,7 @@
             height: 100vh;
             margin: 0;
             flex-direction: column;
-            transition: background-color 0.5s ease; /* Agregar transición para suavizar el cambio de color */
+            transition: background-color 0.5s ease;
         }
 
         #video-container {
@@ -59,7 +59,7 @@
 <!-- Contenedor del video -->
 <div id="video-container">
     <!-- El reproductor de video se cargará aquí -->
-    <video id="videoFrame" autoplay loop controls>
+    <video id="videoFrame" autoplay loop controls crossorigin="anonymous">
         <source src="ctm.mp4" type="video/mp4">
         Tu navegador no soporta el elemento de video.
     </video>
@@ -82,15 +82,11 @@
         var soundImage = document.getElementById('sound-image');
 
         video.addEventListener('loadeddata', function() {
-            // Se ejecuta cuando el video está listo para reproducirse
             setInterval(function() {
-                // Extraer el color dominante del fotograma actual del video
                 var color = getDominantColor(video);
-                
-                // Ajustar la intensidad de la luz de fondo según el color dominante
                 var intensity = (color[0] + color[1] + color[2]) / 3 / 255;
                 ambientLight.backgroundColor = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
-            }, 1000); // Actualizar el color cada segundo
+            }, 1000);
         });
 
         soundImage.addEventListener('click', function() {
@@ -100,13 +96,9 @@
         function getDominantColor(video) {
             var canvas = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
-            canvas.width = video.width;
-            canvas.height = video.height;
-            
-            // Dibuja el fotograma actual en el canvas
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Extrae el color dominante del fotograma
             var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             var color = [0, 0, 0];
             var totalPixels = data.length / 4;
@@ -125,7 +117,6 @@
         }
     });
 </script>
-
 
 </body>
 </html>
