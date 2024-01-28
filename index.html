@@ -24,7 +24,7 @@
             height: 100vh;
             margin: 0;
             flex-direction: column;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.5s ease; /* Agregar transición para suavizar el cambio de color */
         }
 
         #video-container {
@@ -85,7 +85,7 @@
             setInterval(function() {
                 var color = getDominantColor(video);
                 var intensity = (color[0] + color[1] + color[2]) / 3 / 255;
-                ambientLight.backgroundColor = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
+                ambientLight.backgroundColor = isDarkMode() ? 'rgba(0, 0, 0, ' + intensity + ')' : 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
             }, 1000);
         });
 
@@ -114,6 +114,11 @@
             color[2] = Math.round(color[2] / totalPixels);
 
             return color;
+        }
+
+        function isDarkMode() {
+            // Detecta si el sistema está en modo oscuro
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
     });
 </script>
