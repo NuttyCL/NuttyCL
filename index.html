@@ -73,12 +73,10 @@
 <!-- Imagen para reproducir sonido -->
 <img id="sound-image" src="benson.png" alt="Reproducir CTM">
 
-<!-- Script para reproducir sonido al hacer clic en la imagen -->
+<!-- Script para reproducir video y aplicar efecto de luz ambiental -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var video = document.getElementById('videoFrame');
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
         var ambientLight = document.body.style;
         var audio = new Audio('como-tan-muchacho.mp3');
         var soundImage = document.getElementById('sound-image');
@@ -86,11 +84,9 @@
         video.addEventListener('loadeddata', function() {
             // Se ejecuta cuando el video está listo para reproducirse
             setInterval(function() {
-                // Extraer el color dominante del centro del video
-                ctx.drawImage(video, video.width / 4, video.height / 4, video.width / 2, video.height / 2);
-                var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-                var color = getDominantColor(data);
-
+                // Extraer el color dominante del fotograma actual del video
+                var color = getDominantColor(video);
+                
                 // Ajustar la intensidad de la luz de fondo según el color dominante
                 var intensity = (color[0] + color[1] + color[2]) / 3 / 255;
                 ambientLight.backgroundColor = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
@@ -101,7 +97,17 @@
             audio.play();
         });
 
-        function getDominantColor(data) {
+        function getDominantColor(video) {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = video.width;
+            canvas.height = video.height;
+            
+            // Dibuja el fotograma actual en el canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Extrae el color dominante del fotograma
+            var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             var color = [0, 0, 0];
             var totalPixels = data.length / 4;
 
@@ -119,6 +125,7 @@
         }
     });
 </script>
+
 
 </body>
 </html>
