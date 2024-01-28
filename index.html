@@ -79,17 +79,21 @@
         var video = document.getElementById('videoFrame');
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
+        var ambientLight = document.body.style;
         var audio = new Audio('como-tan-muchacho.mp3');
         var soundImage = document.getElementById('sound-image');
 
-        video.addEventListener('load', function() {
-            // Se ejecuta cada vez que el video comienza a reproducirse
+        video.addEventListener('loadeddata', function() {
+            // Se ejecuta cuando el video está listo para reproducirse
             setInterval(function() {
                 // Extraer el color dominante del centro del video
                 ctx.drawImage(video, video.width / 4, video.height / 4, video.width / 2, video.height / 2);
                 var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
                 var color = getDominantColor(data);
-                document.body.style.backgroundColor = 'rgb(' + color[0] + ',' + color[1] + ',' + color[2] + ')';
+
+                // Ajustar la intensidad de la luz de fondo según el color dominante
+                var intensity = (color[0] + color[1] + color[2]) / 3 / 255;
+                ambientLight.backgroundColor = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
             }, 1000); // Actualizar el color cada segundo
         });
 
