@@ -1,125 +1,493 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JP6EY71M2B"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTM — Como Tan Muchacho</title>
 
-        gtag('config', 'G-JP6EY71M2B');
-    </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5209187567555173"
-     crossorigin="anonymous"></script>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTM - Como Tan Muchacho</title>
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            flex-direction: column;
-            transition: background-color 0.5s ease;
-        }
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JP6EY71M2B"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JP6EY71M2B');
+  </script>
 
-        #video-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px; /* Ajusta según tus preferencias */
-            margin-bottom: 20px;
-        }
+  <style>
+    /* ─── Variables ──────────────────────────────────────────────── */
+    :root {
+      --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        #videoFrame {
-            width: 100%;
-            height: auto;
-        }
+    [data-theme="dark"] {
+      --bg:           #0d0d12;
+      --bg-secondary: #13131a;
+      --surface:      rgba(255,255,255,0.05);
+      --surface-hover:rgba(255,255,255,0.09);
+      --border:       rgba(255,255,255,0.10);
+      --text:         #f0f0f5;
+      --text-muted:   #7a7a95;
+      --accent:       #7c5cfc;
+      --accent-glow:  rgba(124,92,252,0.35);
+      --btn-icon:     #f0f0f5;
+      --badge-bg:     rgba(124,92,252,0.18);
+      --shadow:       0 32px 80px rgba(0,0,0,0.7);
+    }
 
-        #sound-image {
-            cursor: pointer;
-            width: 50%;
-            max-width: 150px; /* Ajusta según tus preferencias */
-            height: auto;
-            margin-top: 20px;
-        }
-    </style>
+    [data-theme="light"] {
+      --bg:           #f5f5fb;
+      --bg-secondary: #ebebf7;
+      --surface:      rgba(255,255,255,0.70);
+      --surface-hover:rgba(255,255,255,0.90);
+      --border:       rgba(0,0,0,0.08);
+      --text:         #1a1a2e;
+      --text-muted:   #6b6b88;
+      --accent:       #6240e8;
+      --accent-glow:  rgba(98,64,232,0.20);
+      --btn-icon:     #1a1a2e;
+      --badge-bg:     rgba(98,64,232,0.12);
+      --shadow:       0 24px 60px rgba(0,0,0,0.12);
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { height: 100%; }
+
+    body {
+      min-height: 100%;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 40px;
+      transition: background-color var(--transition), color var(--transition);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ─── Ambient Orbs (background decoration) ───────────────────── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      pointer-events: none;
+      transition: background var(--transition);
+    }
+    .orb-1 {
+      width: 480px; height: 480px;
+      top: -120px; left: -120px;
+      background: var(--accent);
+    }
+    .orb-2 {
+      width: 380px; height: 380px;
+      bottom: -100px; right: -80px;
+      background: #fc5c7d;
+    }
+
+    /* ─── Dynamic Ambient Light ──────────────────────────────────── */
+    #ambient-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      transition: background 1s ease;
+      border-radius: 0;
+    }
+
+    /* ─── Theme Toggle ───────────────────────────────────────────── */
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--btn-icon);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: background var(--transition), border var(--transition),
+                  transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    #theme-toggle:hover {
+      background: var(--surface-hover);
+      transform: scale(1.1) rotate(20deg);
+      box-shadow: 0 6px 24px var(--accent-glow);
+    }
+
+    /* ─── Main Card ──────────────────────────────────────────────── */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 820px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: var(--shadow);
+      transition: background var(--transition), border var(--transition),
+                  box-shadow var(--transition);
+    }
+
+    /* ─── Header ─────────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent) 0%, #fc5c7d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      user-select: none;
+    }
+    .badge {
+      background: var(--badge-bg);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--accent-glow);
+    }
+
+    /* ─── Video Wrapper ──────────────────────────────────────────── */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .video-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 19px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--accent), #fc5c7d);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 1;
+    }
+    #videoFrame {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 18px;
+    }
+
+    /* ─── Divider ────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 26px 0;
+      border: none;
+    }
+
+    /* ─── Sound Section ──────────────────────────────────────────── */
+    .sound-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .sound-info h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .sound-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ─── Benson Button ──────────────────────────────────────────── */
+    #sound-btn {
+      position: relative;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      flex-shrink: 0;
+      border-radius: 50%;
+    }
+    #sound-btn::after {
+      content: '🔊';
+      position: absolute;
+      bottom: -4px; right: -4px;
+      font-size: 1.1rem;
+      background: var(--bg-secondary);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--border);
+      transition: transform 0.2s ease;
+    }
+    #sound-btn:hover::after { transform: scale(1.2); }
+
+    #sound-image {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.25s ease, border-color 0.25s ease;
+      display: block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    #sound-btn:hover #sound-image,
+    #sound-btn:focus-visible #sound-image {
+      transform: scale(1.12) rotate(-6deg);
+      box-shadow: 0 8px 32px var(--accent-glow);
+      border-color: var(--accent);
+    }
+    #sound-btn:active #sound-image {
+      transform: scale(0.94);
+    }
+
+    /* Ripple on click */
+    @keyframes ripple {
+      0%   { transform: scale(0.8); opacity: 0.6; }
+      100% { transform: scale(2.4); opacity: 0;   }
+    }
+    .ripple-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: ripple 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    /* ─── Playing Indicator ──────────────────────────────────────── */
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.4); }
+      50%       { transform: scaleY(1);   }
+    }
+    .wave-bars {
+      display: flex; align-items: flex-end; gap: 3px;
+      height: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .wave-bars.active { opacity: 1; }
+    .wave-bars span {
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: wave 0.9s ease-in-out infinite;
+    }
+    .wave-bars span:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bars span:nth-child(3) { animation-delay: 0.30s; }
+    .wave-bars span:nth-child(4) { animation-delay: 0.10s; }
+    .wave-bars span:nth-child(5) { animation-delay: 0.25s; }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      user-select: none;
+      position: relative;
+      z-index: 1;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      .card { padding: 20px; border-radius: 20px; }
+      .logo { font-size: 1.6rem; }
+      #sound-image { width: 72px; height: 72px; }
+      .sound-info h2 { font-size: 1rem; }
+    }
+
+    /* ─── Page-load Fade In ──────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    .card { animation: fadeUp 0.6s cubic-bezier(0.4,0,0.2,1) both; }
+    .footer { animation: fadeUp 0.6s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
+  </style>
 </head>
 <body>
 
-<!-- Espacio arriba para publicidad -->
-<div id="adsense-top">
-    <!-- Coloca aquí tu código de AdSense -->
-</div>
+  <!-- Background orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-<!-- Contenedor del video -->
-<div id="video-container">
-    <!-- El reproductor de video se cargará aquí -->
-    <video id="videoFrame" autoplay loop controls crossorigin="anonymous">
-        <source src="ctm.mp4" type="video/mp4">
+  <!-- Ambient overlay synced with video -->
+  <div id="ambient-overlay"></div>
+
+  <!-- Theme toggle -->
+  <button id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+    🌙
+  </button>
+
+  <!-- Main card -->
+  <div class="card">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">CTM</div>
+      <span class="badge">Como Tan Muchacho</span>
+    </div>
+
+    <!-- Video -->
+    <div class="video-wrapper">
+      <video id="videoFrame" controls preload="auto">
+        <source src="ctm.mp4" type="video/mp4" />
         Tu navegador no soporta el elemento de video.
-    </video>
-</div>
+      </video>
+    </div>
 
-<!-- Espacio abajo para publicidad -->
-<div id="adsense-bottom">
-    <!-- Coloca aquí tu código de AdSense -->
-</div>
+    <hr class="divider" />
 
-<!-- Imagen para reproducir sonido -->
-<img id="sound-image" src="benson.png" alt="Reproducir CTM">
+    <!-- Sound section -->
+    <div class="sound-section">
+      <div class="sound-info">
+        <h2>¿Cómo tan muchacho?</h2>
+        <p>Dale clic a Benson para escuchar el himno oficial 🎵</p>
+        <div class="wave-bars" id="waveBars">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
 
-<!-- Script para reproducir video y aplicar efecto de luz ambiental -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var video = document.getElementById('videoFrame');
-        var ambientLight = document.body.style;
-        var audio = new Audio('como-tan-muchacho.mp3');
-        var soundImage = document.getElementById('sound-image');
+      <button id="sound-btn" aria-label="Reproducir Como Tan Muchacho">
+        <img id="sound-image" src="benson.png" alt="Benson — ¡Reproducir CTM!" />
+      </button>
+    </div>
 
-        video.addEventListener('loadeddata', function() {
-            setInterval(function() {
-                var color = getDominantColor(video);
-                var intensity = (color[0] + color[1] + color[2]) / 3 / 255;
-                ambientLight.backgroundColor = isDarkMode() ? 'rgba(0, 0, 0, ' + intensity + ')' : 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + intensity + ')';
-            }, 1000);
-        });
+  </div>
 
-        soundImage.addEventListener('click', function() {
-            audio.play();
-        });
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Hecho con ❤️ en Chile &nbsp;·&nbsp; <a href="https://ctm.cl">ctm.cl</a></p>
+  </footer>
 
-        function getDominantColor(video) {
-            var canvas = document.createElement('canvas');
-            var ctx = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            var color = [0, 0, 0];
-            var totalPixels = data.length / 4;
+  <script>
+    /* ── Theme Toggle ─────────────────────────────────────────── */
+    const html         = document.documentElement;
+    const themeBtn     = document.getElementById('theme-toggle');
+    const ICONS        = { dark: '🌙', light: '☀️' };
 
-            for (var i = 0; i < data.length; i += 4) {
-                color[0] += data[i];
-                color[1] += data[i + 1];
-                color[2] += data[i + 2];
-            }
+    function applyTheme(theme) {
+      html.setAttribute('data-theme', theme);
+      themeBtn.textContent = ICONS[theme];
+      localStorage.setItem('ctm-theme', theme);
+    }
 
-            color[0] = Math.round(color[0] / totalPixels);
-            color[1] = Math.round(color[1] / totalPixels);
-            color[2] = Math.round(color[2] / totalPixels);
+    // Load saved preference or system preference
+    const saved   = localStorage.getItem('ctm-theme');
+    const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(saved || (sysDark ? 'dark' : 'light'));
 
-            return color;
-        }
-
-        function isDarkMode() {
-            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
+    themeBtn.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
     });
-</script>
 
+    /* ── Audio ────────────────────────────────────────────────── */
+    const audio     = new Audio('como-tan-muchacho.mp3');
+    const soundBtn  = document.getElementById('sound-btn');
+    const waveBars  = document.getElementById('waveBars');
+
+    audio.addEventListener('ended',  () => waveBars.classList.remove('active'));
+    audio.addEventListener('pause',  () => waveBars.classList.remove('active'));
+    audio.addEventListener('play',   () => waveBars.classList.add('active'));
+
+    soundBtn.addEventListener('click', () => {
+      // Ripple effect
+      const ring = document.createElement('div');
+      ring.className = 'ripple-ring';
+      soundBtn.appendChild(ring);
+      ring.addEventListener('animationend', () => ring.remove());
+
+      if (!audio.paused) {
+        audio.pause();
+        audio.currentTime = 0;
+      } else {
+        audio.play();
+      }
+    });
+
+    /* ── Ambient Light ────────────────────────────────────────── */
+    const video    = document.getElementById('videoFrame');
+    const overlay  = document.getElementById('ambient-overlay');
+    const canvas   = document.createElement('canvas');
+    const ctx      = canvas.getContext('2d', { willReadFrequently: true });
+    let   ambientInterval = null;
+
+    function getDominantColor(vid) {
+      canvas.width  = Math.min(vid.videoWidth,  80);
+      canvas.height = Math.min(vid.videoHeight, 80);
+      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let r = 0, g = 0, b = 0;
+      const total = data.length / 4;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]; g += data[i + 1]; b += data[i + 2];
+      }
+      return [Math.round(r / total), Math.round(g / total), Math.round(b / total)];
+    }
+
+    function startAmbient() {
+      if (ambientInterval) return;
+      ambientInterval = setInterval(() => {
+        try {
+          const [r, g, b] = getDominantColor(video);
+          const isDark = html.getAttribute('data-theme') === 'dark';
+          const alpha  = isDark ? 0.22 : 0.14;
+          overlay.style.background =
+            `radial-gradient(ellipse at center, rgba(${r},${g},${b},${alpha}) 0%, transparent 70%)`;
+        } catch { /* cross-origin / canvas taint guard */ }
+      }, 800);
+    }
+
+    function stopAmbient() {
+      clearInterval(ambientInterval);
+      ambientInterval = null;
+      overlay.style.background = 'none';
+    }
+
+    video.addEventListener('play',  startAmbient);
+    video.addEventListener('pause', stopAmbient);
+    video.addEventListener('ended', stopAmbient);
+  </script>
 </body>
 </html>
